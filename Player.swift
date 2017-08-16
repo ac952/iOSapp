@@ -22,7 +22,7 @@ class Player: SKSpriteNode {
         self.name = "Player";
         self.zPosition = 3;
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5);
-        self.setScale(2.8);
+        self.setScale(2.65);
         
 //        add physicsbody
         self.physicsBody = SKPhysicsBody(rectangleOf: self.size);
@@ -40,7 +40,7 @@ class Player: SKSpriteNode {
     func jump() {
 //        normalize velocity
         self.physicsBody?.velocity = CGVector(dx: 0, dy: 0);
-        self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 300));
+        self.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 310));
         
     }
     

@@ -16,6 +16,8 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
 //    limit number of jumps
     var canJump = false;
     
+    var obstacles = [SKSpriteNode]();
+    
     override func didMove(to view: SKView) {
         initialize();
     }
@@ -27,10 +29,11 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
 //        player.jump();
+        
+//        allow player to jump off of carrot
         if canJump == true {
             canJump = false;
             player.jump();
-            
             
         }
     }
@@ -62,17 +65,27 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
             canJump = false;
         }
         
+//        if player lands on carrot, it can jump again
+        if firstBody.node?.name == "Player" && secondBody.node?.name == "Carrot" {
+            canJump = true;
+        }
+        
+        
     }
     
     func initialize() {
         
         physicsWorld.contactDelegate = self;
         
-        
         createBackground();
         createGround();
         createClouds();
-        createPlayer()
+        createPlayer();
+        createObstacle();
+        
+//        call obstacles infinitely (repeat)
+//        spawn obstacle every two seconds
+        Timer.scheduledTimer(timeInterval: TimeInterval(2), target: self, selector: #selector(GameplayScene.spawnObstacle), userInfo: nil, repeats: true);
         
     }
     
@@ -160,7 +173,71 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(player);
         
     }
+    
+//    change renctangle of size of donuts, make it smaller
+//    vary size of obstacle, and allow bunny to jump infinitely. or only twice
+    func createObstacle() {
+        
+        for i in 0...3 {
+            let obstacle = SKSpriteNode(imageNamed: "obstacle\(i)");
+            
+            if i == 0 {
+                obstacle.name = "Carrot";
+                obstacle.setScale(0.8);
+                obstacle.position = CGPoint(x: self.frame.width + obstacle.size.width, y: -300);
+                obstacle.size = CGSize(width: 200, height: 550);
+                obstacle.physicsBody = SKPhysicsBody(rectangleOf: obstacle.size );
+                
+                
+//                can jump on this obstacle
+            } else {
+                obstacle.name = "Obstacle";
+                obstacle.setScale(0.85);
+//                these obstacles cause player to die
+                obstacle.position = CGPoint(x: self.frame.width + obstacle.size.width, y: -150);
+                obstacle.physicsBody = SKPhysicsBody(circleOfRadius: obstacle.size.width / 2 );
+                
+            }
+            
+            obstacle.zPosition = 2;
+            obstacle.anchorPoint = CGPoint (x: 0.5, y: 0.5);
+    
+//            set obstacle on ground level
+//            obstacle.physicsBody = SKPhysicsBody(rectangleOf: obstacle.size );
+            obstacle.physicsBody?.affectedByGravity = false;
+            obstacle.physicsBody?.isDynamic = false;
+            obstacle.physicsBody?.allowsRotation = false;
+            obstacle.physicsBody?.categoryBitMask = ColliderType.Obstacle;
+            obstacle.physicsBody?.collisionBitMask = ColliderType.Ground | ColliderType.Player;
+            obstacle.physicsBody?.contactTestBitMask = ColliderType.Player | ColliderType.Ground;
+            
+            obstacles.append(obstacle);
+         
+        }
 
+    }
+    
+    func spawnObstacle() {
+        
+        let index = Int(arc4random_uniform(UInt32(obstacles.count)));
+        
+//        obstacles.count = 4 (0-3)
+        
+//        copy obstacle if it calls the same index value again
+        let obstacle = obstacles[index].copy() as! SKSpriteNode;
+        
+        
+//        move obstcle toward player
+        let move = SKAction.moveTo(x: -(self.frame.size.width * 2), duration: TimeInterval(15));
+        
+        let remove = SKAction.removeFromParent();
+        
+        let actionSequence = SKAction.sequence([move,remove]);
+        obstacle.run(actionSequence);
+        
+        self.addChild(obstacle);
+    }
+    
 }
 
 
