@@ -8,7 +8,13 @@
 
 import SpriteKit
 
-class GameplayScene: SKScene {
+class GameplayScene: SKScene, SKPhysicsContactDelegate {
+    
+//    refering to class Player in player.swift
+    var player = Player();
+    
+//    limit number of jumps
+    var canJump = false;
     
     override func didMove(to view: SKView) {
         initialize();
@@ -18,10 +24,55 @@ class GameplayScene: SKScene {
         moveBackground();
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+//        player.jump();
+        if canJump == true {
+            canJump = false;
+            player.jump();
+            
+            
+        }
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        
+//        set firstbody to be the player always
+        var firstBody = SKPhysicsBody();
+        var secondBody = SKPhysicsBody();
+        
+        if contact.bodyA.node?.name == "Player" {
+            firstBody = contact.bodyA;
+            secondBody = contact.bodyB;
+            
+//            if bodyA is ground or obstacle
+        } else {
+            firstBody = contact.bodyB;
+            secondBody = contact.bodyA;
+            
+        }
+        
+//        if player lands on ground, it can jump
+        if firstBody.node?.name == "Player" && secondBody.node?.name == "Ground" {
+            canJump = true;
+        }
+        
+//        if player lands onto obstacle, it will die
+        if firstBody.node?.name == "Player" && secondBody.node?.name == "Obstacle" {
+            canJump = false;
+        }
+        
+    }
+    
     func initialize() {
+        
+        physicsWorld.contactDelegate = self;
+        
+        
         createBackground();
         createGround();
         createClouds();
+        createPlayer()
         
     }
     
@@ -49,6 +100,13 @@ class GameplayScene: SKScene {
             ground.size = CGSize(width: 1334, height: 320);
             ground.position = CGPoint(x: CGFloat(i) * ground.size.width, y: -380);
             ground.zPosition = 1;
+            
+//            add physicsBody to ground so player does not fall off screen
+            ground.physicsBody = SKPhysicsBody(rectangleOf: ground.size);
+            ground.physicsBody?.affectedByGravity = false;
+            ground.physicsBody?.isDynamic = false;
+            ground.physicsBody?.contactTestBitMask = ColliderType.Ground;
+            
             self.addChild(ground);
         }
         
@@ -91,9 +149,15 @@ class GameplayScene: SKScene {
                 node.position.x += self.frame.width * 3
             }
             
-            
         }));
         
+    }
+    
+    func createPlayer() {
+        player = Player(imageNamed: "bunny1");
+        player.position = CGPoint(x: -200, y: 0)
+        player.initialize();
+        self.addChild(player);
         
     }
 
