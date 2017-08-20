@@ -18,12 +18,17 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     
     var obstacles = [SKSpriteNode]();
     
+//    var Lettuce = SKSpriteNode();
+    
+    
+    
     override func didMove(to view: SKView) {
         initialize();
     }
     
     override func update(_ currentTime: TimeInterval) {
         moveBackground();
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -36,6 +41,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
             player.jump();
             
         }
+        
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -63,15 +69,19 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
 //        if player lands onto obstacle, it will die
         if firstBody.node?.name == "Player" && secondBody.node?.name == "Obstacle" {
             canJump = false;
+            
+//            kill player
+            
         }
         
 //        if player lands on carrot, it can jump again
         if firstBody.node?.name == "Player" && secondBody.node?.name == "Carrot" {
             canJump = true;
+            
         }
         
-        
     }
+    
     
     func initialize() {
         
@@ -83,9 +93,19 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         createPlayer();
         createObstacle();
         
+        spawnPoints();
+        
 //        call obstacles infinitely (repeat)
 //        spawn obstacle every two seconds
-        Timer.scheduledTimer(timeInterval: TimeInterval(2), target: self, selector: #selector(GameplayScene.spawnObstacle), userInfo: nil, repeats: true);
+        
+//        Timer.scheduledTimer(timeInterval: TimeInterval(2), target: self, selector: #selector(GameplayScene.spawnObstacle), userInfo: nil, repeats: true);
+        
+        
+//        randomized spawning
+        Timer.scheduledTimer(timeInterval: TimeInterval(randomBetweenTwoNumbers(firstNumber: 2.5, secondNumber: 3)), target: self, selector: #selector(GameplayScene.spawnObstacle), userInfo: nil, repeats: true);
+        
+//        spawnlettuce
+        Timer.scheduledTimer(timeInterval: TimeInterval(1), target: self, selector: #selector(GameplayScene.spawnPoints), userInfo: nil, repeats: true);
         
     }
     
@@ -145,7 +165,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         enumerateChildNodes(withName: "BG", using: ({
             (node, error) in
             
-            node.position.x += 4.5;
+            node.position.x += 7.5;
             
             if node.position.x > (self.frame.width) {
                 node.position.x -= self.frame.width * 3;
@@ -156,7 +176,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         enumerateChildNodes(withName: "Ground", using: ({
             (node, error) in
             
-            node.position.x -= 4.0;
+            node.position.x -= 5.0;
             
             if node.position.x < -(self.frame.width) {
                 node.position.x += self.frame.width * 3
@@ -174,27 +194,48 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-//    change renctangle of size of donuts, make it smaller
+//    change rectangle of size of donuts, make it smaller
 //    vary size of obstacle, and allow bunny to jump infinitely. or only twice
+    
+    
+//    vary height of carrot
+    
     func createObstacle() {
         
         for i in 0...3 {
             let obstacle = SKSpriteNode(imageNamed: "obstacle\(i)");
+
             
             if i == 0 {
                 obstacle.name = "Carrot";
                 obstacle.setScale(0.8);
+//                obstacle starting position is offscreen in x
                 obstacle.position = CGPoint(x: self.frame.width + obstacle.size.width, y: -300);
                 obstacle.size = CGSize(width: 200, height: 550);
                 obstacle.physicsBody = SKPhysicsBody(rectangleOf: obstacle.size );
                 
                 
 //                can jump on this obstacle
-            } else {
+            } else if i == 1 {
                 obstacle.name = "Obstacle";
                 obstacle.setScale(0.85);
-//                these obstacles cause player to die
-                obstacle.position = CGPoint(x: self.frame.width + obstacle.size.width, y: -150);
+//                 obstacle cause player death
+                obstacle.position = CGPoint(x: self.frame.width + obstacle.size.width, y: -152);
+                obstacle.physicsBody = SKPhysicsBody(circleOfRadius: obstacle.size.width / 2 );
+               
+                
+            } else if i == 2 {
+                obstacle.name = "Obstacle";
+                obstacle.setScale(1.0);
+                //                 obstacle cause player death
+                obstacle.position = CGPoint(x: self.frame.width + obstacle.size.width, y: -140);
+                obstacle.physicsBody = SKPhysicsBody(circleOfRadius: obstacle.size.width / 2 );
+                
+            } else {
+                obstacle.name = "Obstacle";
+                obstacle.setScale(0.68);
+                //                obstacles cause player death
+                obstacle.position = CGPoint(x: self.frame.width + obstacle.size.width, y: -170);
                 obstacle.physicsBody = SKPhysicsBody(circleOfRadius: obstacle.size.width / 2 );
                 
             }
@@ -218,6 +259,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func spawnObstacle() {
+    
         
         let index = Int(arc4random_uniform(UInt32(obstacles.count)));
         
@@ -227,7 +269,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         let obstacle = obstacles[index].copy() as! SKSpriteNode;
         
         
-//        move obstcle toward player
+//        move obstacle toward player
         let move = SKAction.moveTo(x: -(self.frame.size.width * 2), duration: TimeInterval(15));
         
         let remove = SKAction.removeFromParent();
@@ -238,19 +280,52 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(obstacle);
     }
     
+//    randomize obstacle
+    func randomBetweenTwoNumbers(firstNumber: CGFloat, secondNumber: CGFloat) -> CGFloat {
+//        arc4random() returns value between 0 -> (2**32)-1
+//        min(firstNum, secondNum) returns minimum value of either first or second number
+        return CGFloat(arc4random()) / CGFloat(UINT32_MAX) * abs(firstNumber - secondNumber) + firstNumber;
+        
+    }
+    
+    func spawnPoints() {
+        
+//        lettuce properties
+        let lettuce = SKSpriteNode(imageNamed: "point1");
+        lettuce.name = "Lettuce";
+        lettuce.setScale(0.45);
+        
+        let beet = SKSpriteNode(imageNamed: "point2");
+        beet.name = "Beet";
+        beet.setScale(0.6);
+        
+        lettuce.position = CGPoint(x: self.frame.width + lettuce.size.width, y: -187);
+        lettuce.zPosition = 2;
+        lettuce.anchorPoint = CGPoint(x: 0.5, y: 0.5);
+        
+//        randomize beet position(could be in the sky as well
+        beet.position = CGPoint(x: 0, y: -187);
+        beet.zPosition = 2;
+        beet.anchorPoint = CGPoint(x: 0.5, y: 0.5);
+        
+//        lettuce and beet physics = points if player collides and disappear after collliding
+        
+        
+//        skactions
+        let moveLettuce = SKAction.moveTo(x: (-self.frame.width * 2), duration: TimeInterval(15));
+        let removeLettuce = SKAction.removeFromParent();
+        
+        let lettuceAction = SKAction.sequence([moveLettuce, removeLettuce]);
+        lettuce.run(lettuceAction);
+
+        self.addChild(lettuce);
+        self.addChild(beet);
+        
+        
+    }
+    
+    
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
