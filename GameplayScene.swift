@@ -278,6 +278,8 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         obstacle.run(actionSequence);
         
         self.addChild(obstacle);
+  
+        
     }
     
 //    randomize obstacle
@@ -295,29 +297,50 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         lettuce.name = "Lettuce";
         lettuce.setScale(0.45);
         
-        let beet = SKSpriteNode(imageNamed: "point2");
-        beet.name = "Beet";
-        beet.setScale(0.6);
-        
         lettuce.position = CGPoint(x: self.frame.width + lettuce.size.width, y: -187);
         lettuce.zPosition = 2;
         lettuce.anchorPoint = CGPoint(x: 0.5, y: 0.5);
         
-//        randomize beet position(could be in the sky as well
-        beet.position = CGPoint(x: 0, y: -187);
+        
+//        beet properties
+        let beet = SKSpriteNode(imageNamed: "point2");
+        beet.name = "Beet";
+        beet.setScale(0.6);
+        
+//        randomize beet position(could be in the sky as well)
+//
+        let randomPosition = [
+            CGPoint(x: self.frame.width + beet.size.width + 1000, y: 280),
+            CGPoint(x: self.frame.width + beet.size.width + 900, y: 100),
+            CGPoint(x: self.frame.width + beet.size.width + 700, y: 0),
+        ];
+        
+//        beet.position = CGPoint(x: self.frame.width + beet.size.width, y: -187);
+        
+        let positionIndex = Int(arc4random_uniform(UInt32(randomPosition.count)))
+        beet.position = randomPosition[positionIndex];
         beet.zPosition = 2;
         beet.anchorPoint = CGPoint(x: 0.5, y: 0.5);
         
 //        lettuce and beet physics = points if player collides and disappear after collliding
         
         
-//        skactions
-        let moveLettuce = SKAction.moveTo(x: (-self.frame.width * 2), duration: TimeInterval(15));
+        
+//        skactions-lettuce
+        let moveLettuce = SKAction.moveTo(x: (-self.frame.width * 2), duration: TimeInterval(10));
         let removeLettuce = SKAction.removeFromParent();
         
         let lettuceAction = SKAction.sequence([moveLettuce, removeLettuce]);
         lettuce.run(lettuceAction);
-
+        
+//        SKActions-beet
+//        beet takes 10 seconds to pass screen
+        let moveBeet = SKAction.moveTo(x: (-self.frame.width * 2), duration: TimeInterval(7));
+        let removeBeet = SKAction.removeFromParent();
+        
+        let beetAction = SKAction.sequence([moveBeet, removeBeet]);
+        beet.run(beetAction);
+        
         self.addChild(lettuce);
         self.addChild(beet);
         
