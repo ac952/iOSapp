@@ -20,14 +20,23 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     
 //    var Lettuce = SKSpriteNode();
     
+    var isAlive = false;
     
+//    stop moving obstacle and points when play die
+    var stopMovingObjects = Timer();
     
     override func didMove(to view: SKView) {
         initialize();
     }
     
     override func update(_ currentTime: TimeInterval) {
-        moveBackground();
+//        moveBackground();
+//        only move background if player is alive
+        if isAlive == true {
+            moveBackground();
+        }
+        
+        playerOutOfBounds();
         
     }
     
@@ -71,6 +80,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
             canJump = false;
             
 //            kill player
+            playerDies();
             
         }
         
@@ -102,10 +112,12 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         
         
 //        randomized spawning
-        Timer.scheduledTimer(timeInterval: TimeInterval(randomBetweenTwoNumbers(firstNumber: 2.5, secondNumber: 3)), target: self, selector: #selector(GameplayScene.spawnObstacle), userInfo: nil, repeats: true);
+        stopMovingObjects = Timer.scheduledTimer(timeInterval: TimeInterval(randomBetweenTwoNumbers(firstNumber: 2.5, secondNumber: 3)), target: self, selector: #selector(GameplayScene.spawnObstacle), userInfo: nil, repeats: true);
         
 //        spawnlettuce
-        Timer.scheduledTimer(timeInterval: TimeInterval(1), target: self, selector: #selector(GameplayScene.spawnPoints), userInfo: nil, repeats: true);
+        stopMovingObjects = Timer.scheduledTimer(timeInterval: TimeInterval(1), target: self, selector: #selector(GameplayScene.spawnPoints), userInfo: nil, repeats: true);
+        
+        isAlive = true;
         
     }
     
@@ -270,8 +282,9 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         
         
 //        move obstacle toward player
-        let move = SKAction.moveTo(x: -(self.frame.size.width * 2), duration: TimeInterval(15));
         
+        let move = SKAction.moveTo(x: -(self.frame.size.width * 2), duration: TimeInterval(15));
+    
         let remove = SKAction.removeFromParent();
         
         let actionSequence = SKAction.sequence([move,remove]);
@@ -312,7 +325,6 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         let randomPosition = [
             CGPoint(x: self.frame.width + beet.size.width + 1000, y: 280),
             CGPoint(x: self.frame.width + beet.size.width + 900, y: 100),
-            CGPoint(x: self.frame.width + beet.size.width + 700, y: 0),
         ];
         
 //        beet.position = CGPoint(x: self.frame.width + beet.size.width, y: -187);
@@ -322,7 +334,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         beet.zPosition = 2;
         beet.anchorPoint = CGPoint(x: 0.5, y: 0.5);
         
-//        lettuce and beet physics = points if player collides and disappear after collliding
+//        lettuce and beet physics = points if player collides and disappear after colliding
         
         
         
@@ -345,6 +357,54 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(beet);
         
         
+    }
+    
+    func playerOutOfBounds() {
+        
+//        if player is alive, check if player is on the screen or not
+        
+        if isAlive == true {
+            if player.position.x < -(self.frame.size.width) - 20 {
+                playerDies();
+            }
+        }
+    }
+    
+    func playerDies() {
+     
+        isAlive = false;
+        player.removeFromParent();
+        stopMovingObjects.invalidate();
+        
+//        remove these properties from screen when player dies and buttons pop up
+        for child in children {
+            if child.name == "Obstacle" || child.name == "Carrot" || child.name == "Lettuce" || child.name == "Beet" {
+                child.removeFromParent();
+            }
+        }
+        
+        let quitButton = SKSpriteNode(imageNamed: "Quit");
+        quitButton.name = "Quit";
+        quitButton.position = CGPoint(x: 250, y: 0);
+        quitButton.anchorPoint = CGPoint(x: 0.5, y: 0.5);
+        quitButton.zPosition = 6;
+        quitButton.setScale(0);
+        
+        let restartButton = SKSpriteNode(imageNamed: "Retry");
+        restartButton.name = "Restart";
+        restartButton.position = CGPoint(x: -250, y: 0);
+        restartButton.anchorPoint = CGPoint(x: 0.5, y: 0.5);
+        restartButton.zPosition = 6;
+        restartButton.setScale(0);
+        
+//        buttons will slowly get bigger on screen starting from scale 0
+        let scaleButton = SKAction.scale(to: 1, duration: TimeInterval(0.5));
+        quitButton.run(scaleButton);
+        restartButton.run(scaleButton);
+        
+        self.addChild(restartButton);
+        self.addChild(quitButton);
+
     }
     
     
