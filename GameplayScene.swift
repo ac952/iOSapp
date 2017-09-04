@@ -50,6 +50,22 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
             player.jump();
             
         }
+        for touch in touches {
+            //get location in gameplayscene
+            let location = touch.location(in: self);
+            
+            if atPoint(location).name == "Restart" {
+                //restart game
+                
+            // remove everything before restarting
+            self.removeAllActions();
+            self.removeAllChildren();
+                
+            //calls initialize for game to restart
+            initialize();
+        
+            }
+        }
         
     }
     
@@ -346,8 +362,8 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         lettuce.run(lettuceAction);
         
 //        SKActions-beet
-//        beet takes 10 seconds to pass screen
-        let moveBeet = SKAction.moveTo(x: (-self.frame.width * 2), duration: TimeInterval(7));
+//        beet takes 11 seconds to pass screen
+        let moveBeet = SKAction.moveTo(x: (-self.frame.width * 2), duration: TimeInterval(11));
         let removeBeet = SKAction.removeFromParent();
         
         let beetAction = SKAction.sequence([moveBeet, removeBeet]);
