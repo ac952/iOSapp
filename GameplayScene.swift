@@ -19,7 +19,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     var obstacles = [SKSpriteNode]();
     
 //    var Lettuce = SKSpriteNode();
-    
+    var gameStart = false;
     var isAlive = false;
     
 //    stop moving obstacle and points when play die
@@ -41,7 +41,10 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+        if gameStart == false {
+            isAlive = true;
+            gameStart = true;
+        }
 //        player.jump();
         
 //        allow player to jump off of carrot
@@ -50,23 +53,28 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
             player.jump();
             
         }
+        
         for touch in touches {
             //get location in gameplayscene
             let location = touch.location(in: self);
             
             if atPoint(location).name == "Restart" {
                 //restart game
+            let gameplay = GameplayScene(fileNamed: "GameplayScene")
+            gameplay!.scaleMode = .aspectFill;
+            self.view?.presentScene(gameplay!, transition: SKTransition.doorway(withDuration: 1.5));
+           
                 
-            // remove everything before restarting
-            self.removeAllActions();
-            self.removeAllChildren();
-                
-            //calls initialize for game to restart
-            initialize();
+            }
+        
+            if atPoint(location).name == "Quit" {
+            // go to main menu
+            let mainMenu = MainMenuScene(fileNamed: "MainMenuScene");
+            mainMenu?.scaleMode = .aspectFit
+            self.view?.presentScene(mainMenu!, transition: SKTransition.doorway(withDuration: TimeInterval(1)));
         
             }
         }
-        
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -111,6 +119,11 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     
     func initialize() {
         
+        // calls these when pressing restart
+        // need to start score to 0, otherwise game will resume prev score
+        gameStart = false;
+        isAlive = false;
+
         physicsWorld.contactDelegate = self;
         
         createBackground();
@@ -362,8 +375,8 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         lettuce.run(lettuceAction);
         
 //        SKActions-beet
-//        beet takes 11 seconds to pass screen
-        let moveBeet = SKAction.moveTo(x: (-self.frame.width * 2), duration: TimeInterval(11));
+//        beet takes 9 seconds to pass screen
+        let moveBeet = SKAction.moveTo(x: (-self.frame.width * 2), duration: TimeInterval(9));
         let removeBeet = SKAction.removeFromParent();
         
         let beetAction = SKAction.sequence([moveBeet, removeBeet]);
