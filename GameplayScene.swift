@@ -427,9 +427,11 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         restartButton.setScale(0);
         
 //        buttons will slowly get bigger on screen starting from scale 0
-        let scaleButton = SKAction.scale(to: 1, duration: TimeInterval(0.5));
-        quitButton.run(scaleButton);
-        restartButton.run(scaleButton);
+        let scaleQuitButton = SKAction.scale(to: 1, duration: TimeInterval(0.5));
+        quitButton.run(scaleQuitButton);
+        
+        let scaleRestartButton = SKAction.scale(to: 0.85, duration: TimeInterval(0.5));
+        restartButton.run(scaleRestartButton);
         
         self.addChild(restartButton);
         self.addChild(quitButton);

@@ -69,7 +69,7 @@ class MainMenuScene: SKScene {
         play.name = "Play";
         play.zPosition = 5;
         play.anchorPoint = CGPoint(x: 0.5, y: 0.5);
-        play.setScale(0.7);
+        play.setScale(0.95);
         play.position = CGPoint(x: -250, y: 0);
         
         
@@ -78,7 +78,7 @@ class MainMenuScene: SKScene {
         highScore.zPosition = 5;
         highScore.anchorPoint = CGPoint(x: 0.5, y: 0.5);
         highScore.position = CGPoint(x: 250, y: 0);
-        highScore.setScale(0.7);
+        highScore.setScale(1.1);
         
         self.addChild(play);
         self.addChild(highScore);
