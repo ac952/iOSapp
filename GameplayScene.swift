@@ -25,6 +25,10 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
 //    stop moving obstacle and points when play die
     var stopMovingObjects = Timer();
     
+    //create score with special font
+    var score = SKLabelNode(fontNamed: "04b_19");
+    var startingScore = 0;
+    
     override func didMove(to view: SKView) {
         initialize();
     }
@@ -134,6 +138,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         
         spawnPoints();
         
+        
 //        call obstacles infinitely (repeat)
 //        spawn obstacle every two seconds
         
@@ -147,7 +152,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         stopMovingObjects = Timer.scheduledTimer(timeInterval: TimeInterval(1), target: self, selector: #selector(GameplayScene.spawnPoints), userInfo: nil, repeats: true);
         
         isAlive = true;
-        
+        createScoreCount();
     }
     
     func createBackground() {
@@ -437,6 +442,17 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(quitButton);
 
     }
+    
+//    display score in middle of screen 
+    func createScoreCount() {
+        score.zPosition = 9;
+        score.position = CGPoint(x: 550, y: 270);
+        score.text = "0";
+        score.fontSize = 100;
+        self.addChild(score);
+    }
+    
+    
     
     
 }

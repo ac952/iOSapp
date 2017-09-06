@@ -26,7 +26,6 @@ class MainMenuScene: SKScene {
 //                let everything be visible on scene within a second
                 game?.scaleMode = .aspectFit
                 self.view?.presentScene(game!, transition: SKTransition.doorway(withDuration: TimeInterval(1)));
-            
             }
             
         }
