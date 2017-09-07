@@ -9,14 +9,12 @@
 import SpriteKit
 
 struct ColliderType {
-//    static let Player: UInt32 = 1;
-    static let Player: UInt32 = 0x1 << 0
+    static let Player: UInt32 = 1;
     static let Ground: UInt32 = 2;
     static let Obstacle: UInt32 = 3;
     
     static let Carrot: UInt32 = 4;
-//    static let Lettuce: UInt32 = 5;
-    static let Lettuce: UInt32 = 0x1 << 1
+    static let Lettuce: UInt32 = 5;
     static let Beet: UInt32 = 6;
     
 }
@@ -31,7 +29,7 @@ class Player: SKSpriteNode {
         self.setScale(2.65);
         
 //        add physicsbody
-        self.physicsBody = SKPhysicsBody(rectangleOf: self.size);
+        self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.width / 1.8);
         self.physicsBody?.affectedByGravity = true;
         self.physicsBody?.allowsRotation = false;
         self.physicsBody?.categoryBitMask = ColliderType.Player;

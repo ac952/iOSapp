@@ -28,7 +28,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     //create score with special font
     var score = SKLabelNode(fontNamed: "04b_19");
 //    starting score
-    var startingScore = 0;
+    var countingScore = 0;
     
     override func didMove(to view: SKView) {
         initialize();
@@ -121,15 +121,20 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         
 //        if player collides with coin, remove it from scene
         if firstBody.node?.name == "Player" && secondBody.node?.name == "Lettuce"{
-            secondBody.node?.removeFromParent();
+            
 //            player gains 1 point
+            countingScore += 1;
+            score.text = String(countingScore);
+            secondBody.node?.removeFromParent();
         
         }
         
         if firstBody.node?.name == "Player" && secondBody.node?.name == "Beet"{
-            secondBody.node?.removeFromParent();
+           
 //            player gains 5 points
-            
+            countingScore += 5;
+            score.text = String(countingScore);
+            secondBody.node?.removeFromParent();
         }
         
     }
@@ -358,12 +363,12 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         lettuce.anchorPoint = CGPoint(x: 0.5, y: 0.5);
         
 //        lettuce physics = 1 point if player collides and disappear after colliding
-        lettuce.physicsBody = SKPhysicsBody(circleOfRadius: lettuce.size.width / 2.45 );
+        lettuce.physicsBody = SKPhysicsBody(circleOfRadius: lettuce.size.width / 2.6 );
         lettuce.physicsBody?.affectedByGravity = false;
         lettuce.physicsBody?.isDynamic = false;
         lettuce.physicsBody?.allowsRotation = false;
         lettuce.physicsBody?.categoryBitMask = ColliderType.Lettuce;
-        lettuce.physicsBody?.collisionBitMask = 1;
+        lettuce.physicsBody?.collisionBitMask = ColliderType.Player | ColliderType.Ground;
         lettuce.physicsBody?.contactTestBitMask = ColliderType.Player | ColliderType.Ground;
        
         
@@ -378,13 +383,13 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
 //        beet properties
         let beet = SKSpriteNode(imageNamed: "point2");
         beet.name = "Beet";
-        beet.setScale(0.6);
+        beet.setScale(1.2);
         
 //        randomize beet position(could be in the sky as well)
 //
         let randomPosition = [
-            CGPoint(x: self.frame.width + beet.size.width + 1000, y: 280),
-            CGPoint(x: self.frame.width + beet.size.width + 900, y: 100),
+            CGPoint(x: self.frame.width + beet.size.width + 1000, y: 290),
+            CGPoint(x: self.frame.width + beet.size.width + 900, y: 110),
         ];
         
 //        beet.position = CGPoint(x: self.frame.width + beet.size.width, y: -187);
@@ -394,8 +399,10 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         beet.zPosition = 2;
         beet.anchorPoint = CGPoint(x: 0.5, y: 0.5);
         
-//        player gains 5 points of collide with beet
-        beet.physicsBody = SKPhysicsBody(circleOfRadius: beet.size.width / 2.45);
+//        player gains 5 points if collide with beet
+//        let texturedBeet = SKSpriteNode(texture: beet);
+        beet.physicsBody = SKPhysicsBody(texture: beet.texture!, size: beet.texture!.size());
+        beet.physicsBody?.usesPreciseCollisionDetection = true;
         beet.physicsBody?.affectedByGravity = false;
         beet.physicsBody?.isDynamic = false;
         beet.physicsBody?.allowsRotation = false;
@@ -423,7 +430,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
 //        if player is alive, check if player is on the screen or not
         
         if isAlive == true {
-            if player.position.x < -(self.frame.size.width) - 20 {
+            if player.position.x < -(self.frame.size.width) - 15 {
                 playerDies();
             }
         }
@@ -471,7 +478,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
 //    display score in upper right corner
     func createScoreCount() {
         score.zPosition = 9;
-        score.position = CGPoint(x: 550, y: 270);
+        score.position = CGPoint(x: 540, y: 270);
         score.text = "0";
         score.fontSize = 100;
         self.addChild(score);
