@@ -9,12 +9,14 @@
 import SpriteKit
 
 struct ColliderType {
-    static let Player: UInt32 = 1;
+//    static let Player: UInt32 = 1;
+    static let Player: UInt32 = 0x1 << 0
     static let Ground: UInt32 = 2;
     static let Obstacle: UInt32 = 3;
     
     static let Carrot: UInt32 = 4;
-    static let Lettuce: UInt32 = 5;
+//    static let Lettuce: UInt32 = 5;
+    static let Lettuce: UInt32 = 0x1 << 1
     static let Beet: UInt32 = 6;
     
 }

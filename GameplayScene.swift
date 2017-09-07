@@ -121,15 +121,18 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         
 //        if player collides with coin, remove it from scene
         if firstBody.node?.name == "Player" && secondBody.node?.name == "Lettuce"{
-        CollisionWithLettuce(player: firstBody.node as! SKSpriteNode, lettuce: secondBody.node as! SKSpriteNode);
+            secondBody.node?.removeFromParent();
+//            player gains 1 point
         
+        }
+        
+        if firstBody.node?.name == "Player" && secondBody.node?.name == "Beet"{
+            secondBody.node?.removeFromParent();
+//            player gains 5 points
+            
         }
         
     }
-    
-    func CollisionWithLettuce(player: SKSpriteNode, lettuce:SKSpriteNode){
-            NSLog("Hello")
-        }
     
     
     func initialize() {
@@ -355,13 +358,21 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         lettuce.anchorPoint = CGPoint(x: 0.5, y: 0.5);
         
 //        lettuce physics = 1 point if player collides and disappear after colliding
-        lettuce.physicsBody = SKPhysicsBody(rectangleOf: lettuce.size );
+        lettuce.physicsBody = SKPhysicsBody(circleOfRadius: lettuce.size.width / 2.45 );
         lettuce.physicsBody?.affectedByGravity = false;
         lettuce.physicsBody?.isDynamic = false;
         lettuce.physicsBody?.allowsRotation = false;
         lettuce.physicsBody?.categoryBitMask = ColliderType.Lettuce;
-        lettuce.physicsBody?.collisionBitMask = ColliderType.Player | ColliderType.Ground;
+        lettuce.physicsBody?.collisionBitMask = 1;
         lettuce.physicsBody?.contactTestBitMask = ColliderType.Player | ColliderType.Ground;
+       
+        
+        //        skactions-lettuce
+        let moveLettuce = SKAction.moveTo(x: (-self.frame.width * 2), duration: TimeInterval(10));
+        let removeLettuce = SKAction.removeFromParent();
+        
+        let lettuceAction = SKAction.sequence([moveLettuce, removeLettuce]);
+        lettuce.run(lettuceAction);
 
         
 //        beet properties
@@ -384,7 +395,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         beet.anchorPoint = CGPoint(x: 0.5, y: 0.5);
         
 //        player gains 5 points of collide with beet
-        beet.physicsBody = SKPhysicsBody(rectangleOf: beet.size);
+        beet.physicsBody = SKPhysicsBody(circleOfRadius: beet.size.width / 2.45);
         beet.physicsBody?.affectedByGravity = false;
         beet.physicsBody?.isDynamic = false;
         beet.physicsBody?.allowsRotation = false;
@@ -392,13 +403,6 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         beet.physicsBody?.collisionBitMask = ColliderType.Player | ColliderType.Ground;
         beet.physicsBody?.contactTestBitMask = ColliderType.Player | ColliderType.Ground;
 
-        
-//        skactions-lettuce
-        let moveLettuce = SKAction.moveTo(x: (-self.frame.width * 2), duration: TimeInterval(10));
-        let removeLettuce = SKAction.removeFromParent();
-        
-        let lettuceAction = SKAction.sequence([moveLettuce, removeLettuce]);
-        lettuce.run(lettuceAction);
         
 //        SKActions-beet
 //        beet takes 9 seconds to pass screen
