@@ -15,6 +15,7 @@ struct ColliderType {
     
     static let Carrot: UInt32 = 4;
     static let Lettuce: UInt32 = 5;
+    static let Beet: UInt32 = 6;
     
 }
 
@@ -32,10 +33,10 @@ class Player: SKSpriteNode {
         self.physicsBody?.affectedByGravity = true;
         self.physicsBody?.allowsRotation = false;
         self.physicsBody?.categoryBitMask = ColliderType.Player;
-        self.physicsBody?.collisionBitMask = ColliderType.Ground | ColliderType.Obstacle | ColliderType.Lettuce;
+        self.physicsBody?.collisionBitMask = ColliderType.Ground | ColliderType.Obstacle | ColliderType.Lettuce | ColliderType.Beet | ColliderType.Carrot;
         
 //        if player is on ground, can jump. if hit obstacle, end game or allow player to jump off
-        self.physicsBody?.contactTestBitMask = ColliderType.Ground | ColliderType.Obstacle | ColliderType.Lettuce;
+        self.physicsBody?.contactTestBitMask = ColliderType.Ground | ColliderType.Obstacle | ColliderType.Lettuce | ColliderType.Beet | ColliderType.Carrot;
         
         
     }

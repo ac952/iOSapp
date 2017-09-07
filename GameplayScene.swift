@@ -14,7 +14,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     var player = Player();
     
 //    limit number of jumps
-    var canJump = false;
+    var Jump = false;
     
     var obstacles = [SKSpriteNode]();
     
@@ -22,11 +22,12 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     var gameStart = false;
     var isAlive = false;
     
-//    stop moving obstacle and points when play die
+//    stop moving obstacle and points when player dies
     var stopMovingObjects = Timer();
     
     //create score with special font
     var score = SKLabelNode(fontNamed: "04b_19");
+//    starting score
     var startingScore = 0;
     
     override func didMove(to view: SKView) {
@@ -52,8 +53,8 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
 //        player.jump();
         
 //        allow player to jump off of carrot
-        if canJump == true {
-            canJump = false;
+        if Jump == true {
+            Jump = false;
             player.jump();
             
         }
@@ -100,12 +101,12 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         
 //        if player lands on ground, it can jump
         if firstBody.node?.name == "Player" && secondBody.node?.name == "Ground" {
-            canJump = true;
+            Jump = true;
         }
         
 //        if player lands onto obstacle, it will die
         if firstBody.node?.name == "Player" && secondBody.node?.name == "Obstacle" {
-            canJump = false;
+            Jump = false;
             
 //            kill player
             playerDies();
@@ -114,11 +115,21 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         
 //        if player lands on carrot, it can jump again
         if firstBody.node?.name == "Player" && secondBody.node?.name == "Carrot" {
-            canJump = true;
+            Jump = true;
             
         }
         
+//        if player collides with coin, remove it from scene
+        if firstBody.node?.name == "Player" && secondBody.node?.name == "Lettuce"{
+        CollisionWithLettuce(player: firstBody.node as! SKSpriteNode, lettuce: secondBody.node as! SKSpriteNode);
+        
+        }
+        
     }
+    
+    func CollisionWithLettuce(player: SKSpriteNode, lettuce:SKSpriteNode){
+            NSLog("Hello")
+        }
     
     
     func initialize() {
@@ -299,14 +310,12 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
             obstacle.physicsBody?.contactTestBitMask = ColliderType.Player | ColliderType.Ground;
             
             obstacles.append(obstacle);
-         
         }
 
     }
     
     func spawnObstacle() {
     
-        
         let index = Int(arc4random_uniform(UInt32(obstacles.count)));
         
 //        obstacles.count = 4 (0-3)
@@ -325,8 +334,6 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         obstacle.run(actionSequence);
         
         self.addChild(obstacle);
-  
-        
     }
     
 //    randomize obstacle
@@ -334,7 +341,6 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
 //        arc4random() returns value between 0 -> (2**32)-1
 //        min(firstNum, secondNum) returns minimum value of either first or second number
         return CGFloat(arc4random()) / CGFloat(UINT32_MAX) * abs(firstNumber - secondNumber) + firstNumber;
-        
     }
     
     func spawnPoints() {
@@ -348,6 +354,15 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         lettuce.zPosition = 2;
         lettuce.anchorPoint = CGPoint(x: 0.5, y: 0.5);
         
+//        lettuce physics = 1 point if player collides and disappear after colliding
+        lettuce.physicsBody = SKPhysicsBody(rectangleOf: lettuce.size );
+        lettuce.physicsBody?.affectedByGravity = false;
+        lettuce.physicsBody?.isDynamic = false;
+        lettuce.physicsBody?.allowsRotation = false;
+        lettuce.physicsBody?.categoryBitMask = ColliderType.Lettuce;
+        lettuce.physicsBody?.collisionBitMask = ColliderType.Player | ColliderType.Ground;
+        lettuce.physicsBody?.contactTestBitMask = ColliderType.Player | ColliderType.Ground;
+
         
 //        beet properties
         let beet = SKSpriteNode(imageNamed: "point2");
@@ -368,9 +383,15 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         beet.zPosition = 2;
         beet.anchorPoint = CGPoint(x: 0.5, y: 0.5);
         
-//        lettuce and beet physics = points if player collides and disappear after colliding
-        
-        
+//        player gains 5 points of collide with beet
+        beet.physicsBody = SKPhysicsBody(rectangleOf: beet.size);
+        beet.physicsBody?.affectedByGravity = false;
+        beet.physicsBody?.isDynamic = false;
+        beet.physicsBody?.allowsRotation = false;
+        beet.physicsBody?.categoryBitMask = ColliderType.Beet;
+        beet.physicsBody?.collisionBitMask = ColliderType.Player | ColliderType.Ground;
+        beet.physicsBody?.contactTestBitMask = ColliderType.Player | ColliderType.Ground;
+
         
 //        skactions-lettuce
         let moveLettuce = SKAction.moveTo(x: (-self.frame.width * 2), duration: TimeInterval(10));
@@ -443,7 +464,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
 
     }
     
-//    display score in middle of screen 
+//    display score in upper right corner
     func createScoreCount() {
         score.zPosition = 9;
         score.position = CGPoint(x: 550, y: 270);
@@ -452,8 +473,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(score);
     }
     
-    
-    
+
     
 }
 
