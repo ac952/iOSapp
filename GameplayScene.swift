@@ -8,6 +8,10 @@
 
 //Disclaimer: I don't own any of the assets/artwork for this app
 //I got my images from the makeschoolacademy page and awesometuts free asset download via udemy
+//image for lettuce
+//https://cdn.dribbble.com/users/579540/screenshots/2149115/ad_punlettuce_1x.png
+//image for coin
+//http://www.istockphoto.com/vector/dollar-coins-rotation-gm501700128-81479385?esource=SEO_GIS_CDN_Redirect
 
 
 import SpriteKit
@@ -22,12 +26,13 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     
     var obstacles = [SKSpriteNode]();
     
-//    var Lettuce = SKSpriteNode();
     var gameStart = false;
-    var isAlive = false;
+    
+    var Alive = false;
     
 //    stop moving obstacle and points when player dies
     var stopMovingObjects = Timer();
+    var stopMovingPoints = Timer();
     
     //create score with special font
     var score = SKLabelNode(fontNamed: "04b_19");
@@ -41,8 +46,9 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
 //        moveBackground();
 //        only move background if player is alive
-        if isAlive == true {
+        if Alive == true {
             moveBackground();
+            
         }
         
         playerOutOfBounds();
@@ -50,10 +56,16 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if gameStart == false {
-            isAlive = true;
-            gameStart = true;
-        }
+        //if gameStart == false {
+            //Alive = true;
+            //gameStart = true;
+        //}
+        
+        
+        
+        
+        
+        
 //        player.jump();
         
 //        allow player to jump off of carrot
@@ -113,7 +125,10 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
             Jump = false;
             
 //            kill player
-            playerDies();
+            if Alive == true {
+                playerDies();
+            }
+            
             
         }
         
@@ -149,7 +164,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         // calls these when pressing restart
         // need to start score to 0, otherwise game will resume prev score
         gameStart = false;
-        isAlive = false;
+        Alive = false;
 
         physicsWorld.contactDelegate = self;
         
@@ -159,7 +174,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         createPlayer();
         createObstacle();
         
-        spawnPoints();
+        //spawnPoints();
         
         
 //        call obstacles infinitely (repeat)
@@ -173,13 +188,13 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         
         
 //        randomize spawning points
-        stopMovingObjects = Timer.scheduledTimer(timeInterval: TimeInterval(randomBetweenTwoNumbers(firstNumber: 2.5, secondNumber: 8)), target: self, selector: #selector(GameplayScene.spawnPoints), userInfo: nil, repeats: true);
+        stopMovingPoints = Timer.scheduledTimer(timeInterval: TimeInterval(randomBetweenTwoNumbers(firstNumber: 2.5, secondNumber: 8)), target: self, selector: #selector(GameplayScene.spawnPoints), userInfo: nil, repeats: true);
         
 //        spawnpoints
         stopMovingObjects = Timer.scheduledTimer(timeInterval: TimeInterval(1), target: self, selector: #selector(GameplayScene.spawnPoints), userInfo: nil, repeats: true);
        
         
-        isAlive = true;
+        Alive = true;
         createScoreCount();
     }
     
@@ -294,7 +309,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
                 obstacle.name = "Obstacle";
                 obstacle.setScale(0.8);
 //                 obstacle cause player death
-                obstacle.position = CGPoint(x: self.frame.width + obstacle.size.width, y: -156);
+                obstacle.position = CGPoint(x: self.frame.width + obstacle.size.width, y: -158);
                 obstacle.physicsBody = SKPhysicsBody(circleOfRadius: obstacle.size.width / 2 );
                
                 
@@ -302,7 +317,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
                 obstacle.name = "Obstacle";
                 obstacle.setScale(0.9);
                 //                 obstacle cause player death
-                obstacle.position = CGPoint(x: self.frame.width + obstacle.size.width, y: -145);
+                obstacle.position = CGPoint(x: self.frame.width + obstacle.size.width, y: -148);
                 obstacle.physicsBody = SKPhysicsBody(circleOfRadius: obstacle.size.width / 2 );
                 
             } else {
@@ -348,7 +363,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         let remove = SKAction.removeFromParent();
         
         let actionSequence = SKAction.sequence([move,remove]);
-        obstacle.run(actionSequence);
+       obstacle.run(actionSequence);
         
         self.addChild(obstacle);
     }
@@ -367,11 +382,9 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         let lettuce = SKSpriteNode(imageNamed: "point1");
         lettuce.name = "Lettuce";
         lettuce.setScale(0.7);
-        
-        lettuce.position = CGPoint(x: self.frame.width + lettuce.size.width + 900, y: 90);
+        lettuce.position = CGPoint(x: self.frame.width + lettuce.size.width + 900, y: 80);
         lettuce.zPosition = 10;
         lettuce.anchorPoint = CGPoint(x: 0.5, y: 0.5);
-        
 //        lettuce physics = 1 point if player collides and disappear after colliding
         lettuce.physicsBody = SKPhysicsBody(circleOfRadius: lettuce.size.width / 2.1);
         lettuce.physicsBody?.affectedByGravity = false;
@@ -380,9 +393,7 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         lettuce.physicsBody?.categoryBitMask = ColliderType.Lettuce;
         //lettuce.physicsBody?.collisionBitMask = ColliderType.Player | ColliderType.Ground ;
         lettuce.physicsBody?.collisionBitMask = 0;
-        lettuce.physicsBody?.contactTestBitMask = ColliderType.Player | ColliderType.Ground ;
-       
-        
+        lettuce.physicsBody?.contactTestBitMask = ColliderType.Player;
         //        skactions-lettuce
         let moveLettuce = SKAction.moveTo(x: (-self.frame.width * 3 ), duration: TimeInterval(13));
         let removeLettuce = SKAction.removeFromParent();
@@ -390,42 +401,26 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         let lettuceAction = SKAction.sequence([moveLettuce, removeLettuce]);
         lettuce.run(lettuceAction);
 
-        
 //        beet properties
         let beet = SKSpriteNode(imageNamed: "point2");
         beet.name = "Beet";
-        beet.setScale(1.0);
-        
-        
-//        randomize beet position(could be in the sky as well)
-//
-//        let randomPosition = [
-//            CGPoint(x: self.frame.width + beet.size.width + 1000, y: 290),
-//            
-//        ];
-        
-        beet.position = CGPoint(x: self.frame.width + beet.size.width + 6000, y: 270);
-        
-//        let positionIndex = Int(arc4random_uniform(UInt32(randomPosition.count)))
-//        beet.position = randomPosition[positionIndex];
+        beet.setScale(0.4);
+        beet.position = CGPoint(x: self.frame.width + beet.size.width + 11000, y: 180);
         beet.zPosition = 10;
         beet.anchorPoint = CGPoint(x: 0.5, y: 0.5);
-        
 //        player gains 5 points if collide with beet
 //        let texturedBeet = SKSpriteNode(texture: beet);
-        beet.physicsBody = SKPhysicsBody(texture: beet.texture!, size: beet.texture!.size() );
+        beet.physicsBody = SKPhysicsBody(circleOfRadius: beet.size.width/1.9);
         beet.physicsBody?.affectedByGravity = false;
         beet.physicsBody?.isDynamic = true;
         beet.physicsBody?.allowsRotation = false;
         beet.physicsBody?.categoryBitMask = ColliderType.Beet;
-        //beet.physicsBody?.collisionBitMask = ColliderType.Player | ColliderType.Ground;
+        beet.physicsBody?.contactTestBitMask = ColliderType.Player;
         beet.physicsBody?.collisionBitMask = 0;
-        beet.physicsBody?.contactTestBitMask = ColliderType.Player | ColliderType.Ground;
-
         
 //        SKActions-beet
-//        beet takes 9 seconds to pass screen
-        let moveBeet = SKAction.moveTo(x: (-self.frame.width), duration: TimeInterval(9));
+//        beet takes 11 seconds to pass screen
+        let moveBeet = SKAction.moveTo(x: (-self.frame.width), duration: TimeInterval(12));
         let removeBeet = SKAction.removeFromParent();
         
         let beetAction = SKAction.sequence([moveBeet, removeBeet]);
@@ -434,14 +429,13 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(lettuce);
         self.addChild(beet);
         
-        
     }
     
     func playerOutOfBounds() {
         
 //        if player is alive, check if player is on the screen or not
         
-        if isAlive == true {
+        if Alive == true {
             if player.position.x < -(self.frame.size.width) - 15 {
                 playerDies();
             }
@@ -449,10 +443,18 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func playerDies() {
+        
+        //save score when player dies
+        let high_score = UserDefaults.standard.integer(forKey: "highscore");
+        
+        
+        if high_score < countingScore {
+            UserDefaults.standard.set(countingScore,forKey: "highscore");
+        }
      
-        isAlive = false;
+        
         player.removeFromParent();
-        stopMovingObjects.invalidate();
+        
         
 //        remove these properties from screen when player dies and buttons pop up
         for child in children {
@@ -460,6 +462,10 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
                 child.removeFromParent();
             }
         }
+        
+        stopMovingObjects.invalidate();
+        stopMovingPoints.invalidate();
+        Alive  = false;
         
         let quitButton = SKSpriteNode(imageNamed: "Quit");
         quitButton.name = "Quit";
@@ -499,8 +505,6 @@ class GameplayScene: SKScene, SKPhysicsContactDelegate {
 
     
 }
-
-
 
 
 

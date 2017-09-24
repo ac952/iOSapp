@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7518B7271F61A77500FB4C67 /* InstructionScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7518B7261F61A77500FB4C67 /* InstructionScene.swift */; };
+		7518B72B1F660A4800FB4C67 /* InstructionScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 7518B72A1F660A4800FB4C67 /* InstructionScene.sks */; };
 		7548B9631F4BCB9C006E0448 /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7548B9621F4BCB9C006E0448 /* MainMenuScene.swift */; };
 		7548B9651F4BCBB4006E0448 /* MainMenuScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 7548B9641F4BCBB4006E0448 /* MainMenuScene.sks */; };
 		7548B9681F5F96CC006E0448 /* 04b_19.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7548B9671F5F96CC006E0448 /* 04b_19.ttf */; };
@@ -41,6 +43,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7518B7261F61A77500FB4C67 /* InstructionScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstructionScene.swift; sourceTree = "<group>"; };
+		7518B72A1F660A4800FB4C67 /* InstructionScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = InstructionScene.sks; sourceTree = "<group>"; };
 		7548B9621F4BCB9C006E0448 /* MainMenuScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
 		7548B9641F4BCBB4006E0448 /* MainMenuScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenuScene.sks; sourceTree = "<group>"; };
 		7548B9671F5F96CC006E0448 /* 04b_19.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = 04b_19.ttf; sourceTree = "<group>"; };
@@ -173,6 +177,7 @@
 			children = (
 				75C9AD831F3FF24900181513 /* GameplayScene.swift */,
 				7548B9621F4BCB9C006E0448 /* MainMenuScene.swift */,
+				7518B7261F61A77500FB4C67 /* InstructionScene.swift */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -182,6 +187,7 @@
 			children = (
 				75C9AD811F3FF23200181513 /* GameplayScene.sks */,
 				7548B9641F4BCBB4006E0448 /* MainMenuScene.sks */,
+				7518B72A1F660A4800FB4C67 /* InstructionScene.sks */,
 			);
 			name = "Scene Classes";
 			sourceTree = "<group>";
@@ -296,6 +302,7 @@
 				75C9AD521F3FF1AA00181513 /* Main.storyboard in Resources */,
 				7548B9681F5F96CC006E0448 /* 04b_19.ttf in Resources */,
 				75C9AD571F3FF1AA00181513 /* LaunchScreen.storyboard in Resources */,
+				7518B72B1F660A4800FB4C67 /* InstructionScene.sks in Resources */,
 				75C9AD821F3FF23200181513 /* GameplayScene.sks in Resources */,
 				75C9AD4B1F3FF1AA00181513 /* Actions.sks in Resources */,
 				7548B9651F4BCBB4006E0448 /* MainMenuScene.sks in Resources */,
@@ -327,6 +334,7 @@
 				7548B9631F4BCB9C006E0448 /* MainMenuScene.swift in Sources */,
 				75AD9E381F42921100BB3A5A /* Player.swift in Sources */,
 				75C9AD841F3FF24900181513 /* GameplayScene.swift in Sources */,
+				7518B7271F61A77500FB4C67 /* InstructionScene.swift in Sources */,
 				75C9AD4F1F3FF1AA00181513 /* GameViewController.swift in Sources */,
 				75C9AD471F3FF1AA00181513 /* AppDelegate.swift in Sources */,
 			);
